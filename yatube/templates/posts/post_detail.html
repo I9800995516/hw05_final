@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+
+<head>
+  {% block title %} Пост: "{{ post.text|truncatechars:30 }}..."
+</head>
+  {% endblock %}
+  <body>	
+
+{% block content %}
+<main>
+  <div class="row">
+    {% include 'posts/includes/content.html' %}
+    {% include 'posts/includes/editing.html' %}
+    {% include 'posts/includes/comments.html' %}
+    </article>
+  </div>
+</main>
+{% endblock %}
+
+  

@@ -149,4 +149,16 @@ dmypy.json
 static/
 yatube/posts/static/
 yatube/media/
+yatube/posts/media/
+
+media/ 
+/media/ 
+.media/ 
+
+htmlcov
+
+sent_emails
+sent_emails/
+
+
 

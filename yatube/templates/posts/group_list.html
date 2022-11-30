@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %} Записи сообщества: {{ group.title }} {% endblock title %}
+{%block content%}
+  <div class="container py-5">
+  <h1>{{ group.title }}</h1>
+  <p>{{ gr_descr }}</p>
+  {% for post in page_obj %}
+  <article>
+    {% include 'includes/post_template.html' %}
+    {% if post.group %}
+    <p>{{ post.text }}</p>
+    <a href="{% url 'posts:post_detail' post.id %}">
+      подробная информация</a>
+  </article>
+    <a href="{% url 'posts:group_list' post.group.slug %}">
+        все записи группы</a>
+    {% endif %}
+    {% if not forloop.last %}<hr>{% endif %}
+  {% endfor %}
+  {% include 'posts/includes/paginator.html' %}
+  </div>
+{% endblock content %}
+
