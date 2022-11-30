@@ -42,7 +42,7 @@ class PostPagesTests(TestCase):
         cls.group_test = Group.objects.create(
             title='Тестовая группа',
             slug='test',
-            description='Описание тестовой группы'
+            description='Описание тестовой группы',
         )
 
         cls.post = Post.objects.create(
@@ -62,22 +62,22 @@ class PostPagesTests(TestCase):
             description='Другое описание',
         )
         cls.index = (
-            'posts:index', 'posts/index.html', None
+            'posts:index', 'posts/index.html', None,
         )
         cls.group_list = (
-            'posts:group_list', 'posts/group_list.html', [cls.group.slug]
+            'posts:group_list', 'posts/group_list.html', [cls.group.slug],
         )
         cls.profile = (
-            'posts:profile', 'posts/profile.html', [cls.post.author]
+            'posts:profile', 'posts/profile.html', [cls.post.author],
         )
         cls.post_detail = (
-            'posts:post_detail', 'posts/post_detail.html', [cls.post.id]
+            'posts:post_detail', 'posts/post_detail.html', [cls.post.id],
         )
         cls.post_edit = (
-            'posts:post_edit', 'posts/create_post.html', [cls.post.id]
+            'posts:post_edit', 'posts/create_post.html', [cls.post.id],
         )
         cls.post_create = (
-            'posts:post_create', 'posts/create_post.html', None
+            'posts:post_create', 'posts/create_post.html', None,
         )
         cls.index_reverse = reverse(cls.index[0])
         cls.page_with_paginator = [
@@ -88,11 +88,11 @@ class PostPagesTests(TestCase):
         cls.page_without_paginator = [
             cls.post_create,
             cls.post_detail,
-            cls.post_edit
+            cls.post_edit,
         ]
         cls.all_pages = [
             *cls.page_with_paginator,
-            *cls.page_without_paginator
+            *cls.page_without_paginator,
         ]
 
     @classmethod
@@ -143,7 +143,7 @@ class PostPagesTests(TestCase):
     def test_post_detail_show_correct_context(self):
         """Проверка context на странице post_detail."""
         response = self.authorized_client.get(
-            self.make_reverse(self.post_detail)
+            self.make_reverse(self.post_detail),
         )
         form_data = {
             'text': self.comment.text,
@@ -155,14 +155,14 @@ class PostPagesTests(TestCase):
     def test_create_post_show_correct_context(self):
         """Проверка context на странице create_post."""
         response = self.authorized_client.get(
-            self.make_reverse(self.post_create)
+            self.make_reverse(self.post_create),
         )
         self.post_response_context(response)
 
     def test_post_edit_page_show_correct_context(self):
         """Проверка context на странице post_edit."""
         response = self.authorized_client.get(
-            self.make_reverse(self.post_edit)
+            self.make_reverse(self.post_edit),
         )
         is_edit = response.context['is_edit']
         self.post_response_context(response)
@@ -180,7 +180,7 @@ class PostPagesTests(TestCase):
     def test_group_post(self):
         """Проверка на ошибочное попадание поста не в ту группу."""
         response = self.authorized_client.get(reverse(
-            'posts:group_list', args=[self.new_group.slug])
+            'posts:group_list', args=[self.new_group.slug]),
         )
         self.assertNotIn(self.post, response.context['page_obj'].object_list)
 
@@ -201,7 +201,7 @@ class PaginatorViewTest(TestCase):
         cls.pages_with_pagination = [
             cls.index,
             cls.group_list,
-            cls.profile
+            cls.profile,
         ]
 
         for i in range(13):
@@ -209,7 +209,7 @@ class PaginatorViewTest(TestCase):
                 text=f'Тестовый текст {i+1}',
                 author=cls.user,
                 group=cls.group,
-                id=i
+                id=i,
             )
 
     def setUp(self):
@@ -241,11 +241,11 @@ class FollowTests(TestCase):
         cls.user_2 = User.objects.create_user(username='author')
         cls.post = Post.objects.create(
             author=cls.user_2,
-            text='Тестовый текст'
+            text='Тестовый текст',
         )
         cls.follow = Follow.objects.filter(
             user=cls.user_1,
-            author=cls.user_2
+            author=cls.user_2,
         )
         cls.profile_follow = ('posts:profile_follow', [cls.user_2.username])
         cls.profile_unfollow = (

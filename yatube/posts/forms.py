@@ -1,7 +1,5 @@
 from django import forms
 
-from django.db import models
-
 from posts.models import Post, Comment
 
 
@@ -12,12 +10,12 @@ class PostForm(forms.ModelForm):
         labels = {
             'text': ('Текст'),
             'group': ('Группа'),
-            'image': ('Картинка')
+            'image': ('Картинка'),
         }
         help_texts = {
             'text': ('Введите текст поста'),
             'group': ('Выберите группу'),
-            'image': ('Выберите картинку поста')
+            'image': ('Выберите картинку поста'),
         }
         error_messages = {
             'text': {
@@ -28,6 +26,7 @@ class PostForm(forms.ModelForm):
             },
         }
 
+
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
@@ -35,6 +34,3 @@ class CommentForm(forms.ModelForm):
         help_texts = {
             'text': 'Текст комментария',
         }
-
-# class Comment(models.Model):
-#     text = models.TextField('text', help_text='Текст нового комментария') 

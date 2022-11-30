@@ -71,22 +71,22 @@ class Post(CreatedModel):
     def __str__(self):
         return self.text[:15]
 
+
 class Comment(CreatedModel):
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
-        related_name='comments'
+        related_name='comments',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='comments'
+        related_name='comments',
     )
     text = models.TextField(
         verbose_name='Текст комментария',
-        help_text='Введите текст комментария'
+        help_text='Введите текст комментария',
     )
-
 
     class Meta:
         ordering = ['-pub_date']
@@ -103,12 +103,12 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         null=True,
         related_name='follower',
-        verbose_name='Пользователь'
+        verbose_name='Пользователь',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         null=True,
         related_name='following',
-        verbose_name='Автор'
+        verbose_name='Автор',
     )

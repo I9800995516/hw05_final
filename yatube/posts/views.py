@@ -12,6 +12,7 @@ from posts.utpag import paginator
 PER_PAGE = settings.PERPAGE
 POST_TITLE = 30
 
+
 @cache_page(60 * 20, key_prefix="index_page")
 def index(request: HttpRequest) -> HttpResponse:
     """Модуль отвечающий за главную страницу."""
@@ -25,6 +26,7 @@ def index(request: HttpRequest) -> HttpResponse:
         'page_obj': page_obj,
     }
     return render(request, 'posts/index.html', context)
+
 
 def group_posts(request: HttpRequest, slug: str) -> HttpResponse:
     """Модуль отвечающий за страницу сообщества."""
@@ -55,7 +57,7 @@ def profile(request: HttpRequest, username: str) -> HttpResponse:
         request.user.is_authenticated
         and Follow.objects.filter(
             user=request.user,
-            author=author
+            author=author,
         ).exists()
     )
     context = {
@@ -112,7 +114,7 @@ def post_edit(request: HttpRequest, post_id: int) -> HttpResponse:
         files=request.FILES or None,
         instance=post,
     )
-    
+
     if form.is_valid():
         form.save()
         return redirect('posts:post_detail', post_id=post_id)
@@ -122,6 +124,8 @@ def post_edit(request: HttpRequest, post_id: int) -> HttpResponse:
         'is_edit': True,
     }
     return render(request, 'posts/create_post.html', context)
+
+
 @login_required
 def add_comment(request, post_id):
     # Получите пост и сохраните его в переменную post.
@@ -134,6 +138,7 @@ def add_comment(request, post_id):
         comment.save()
     return redirect('posts:post_detail', post_id=post_id)
 
+
 @login_required
 def post_delete(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
@@ -145,8 +150,6 @@ def post_delete(request, post_id):
 def follow_index(request):
     """Старница с постами авторов, на которых подписан текущий пользователь."""
     template_name = 'posts/follow.html'
-    # post_list = Post.objects.filter(author__following__user=request.user).all()
-    # page_obj = get_page(post_list, request)
     posts = Post.objects.filter(author__following__user=request.user).all()
     page_obj = paginator(posts, request, PER_PAGE)
 

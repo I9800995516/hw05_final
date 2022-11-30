@@ -1,12 +1,10 @@
 import tempfile
 from http import HTTPStatus
-
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-
-from  posts.models import Comment, Group, Post
+from posts.models import Comment, Group, Post
 
 User = get_user_model()
 
@@ -37,11 +35,11 @@ class CommentCreateExistTest(TestCase):
         comments_count = Comment.objects.count()
         post_id = self.post_test.pk
         form_data = {
-            'text': 'Тестовый комментарий 2'
+            'text': 'Тестовый комментарий 2',
         }
         self.authorized_client.post(
             reverse('posts:add_comment', kwargs={'post_id': post_id}),
-            data=form_data
+            data=form_data,
         )
         self.assertEqual(Comment.objects.count(), comments_count + 1)
 
@@ -51,16 +49,16 @@ class CommentCreateExistTest(TestCase):
         comments_count = Comment.objects.count()
         post_id = self.post_test.pk
         form_data = {
-            'text': 'Тестовый комментарий 2'
+            'text': 'Тестовый комментарий 2',
         }
         response = self.guest_client.post(
             reverse('posts:add_comment', kwargs={'post_id': post_id}),
-            data=form_data
+            data=form_data,
         )
         self.assertEqual(Comment.objects.count(), comments_count)
         redirect = "%s?next=%s" % (
             reverse('users:login'),
-            reverse('posts:add_comment', kwargs={'post_id': post_id})
+            reverse('posts:add_comment', kwargs={'post_id': post_id}),
         )
         self.assertRedirects(response, redirect)
 
@@ -76,7 +74,7 @@ class PostCreateExistTest(TestCase):
         cls.group_test = Group.objects.create(
             title='Тестовая группа',
             slug='test',
-            description='Описание тестовой группы'
+            description='Описание тестовой группы',
         )
         small_gif = (
             b'\x47\x49\x46\x38\x39\x61\x02\x00'
@@ -95,7 +93,7 @@ class PostCreateExistTest(TestCase):
             text='Тестовый пост контент',
             group=cls.group_test,
             author=cls.user,
-            image=uploaded
+            image=uploaded,
         )
 
     def test_create_post(self):
@@ -105,7 +103,7 @@ class PostCreateExistTest(TestCase):
         form_data = {
             "group": self.group_test.pk,
             "text": "Тестовый текст",
-            "image": self.post_test.image
+            "image": self.post_test.image,
         }
         response = self.authorized_client.post(reverse("posts:post_create"),
                                                data=form_data,
@@ -124,17 +122,17 @@ class PostCreateExistTest(TestCase):
         username = self.user.username
         form_fields = {
             'text': 'Тестовый пост контент редактирования',
-            'group': self.group_test.pk
+            'group': self.group_test.pk,
         }
         response = self.authorized_client.post(
             reverse('posts:post_edit', kwargs={'post_id': post_id}),
             data=form_fields,
-            follow=True
+            follow=True,
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertRedirects(response, reverse(
             'posts:post_detail',
-            kwargs={'post_id': post_id}
+            kwargs={'post_id': post_id},
         ))
         post = Post.objects.get(pk=post_id)
         self.assertEqual(post.text, form_fields['text'])
