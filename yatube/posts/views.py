@@ -1,19 +1,28 @@
 from django.conf import settings
+
 from django.contrib.auth.decorators import login_required
+
 from django.core.paginator import Paginator
+
 from django.http import HttpRequest, HttpResponse
+
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponse, Http404
-from posts.forms import CommentForm, PostForm
-from posts.models import Comment, Follow, Group, Post, User
+
+from django.http import HttpResponse
+
+from .forms import CommentForm, PostForm
+
+from .models import Comment, Follow, Group, Post, User
+
 from django.views.decorators.cache import cache_page
-from posts.utpag import paginator
+
+from .utpag import paginator
 
 PER_PAGE = settings.PERPAGE
 POST_TITLE = 30
 
 
-@cache_page(60 * 20, key_prefix="index_page")
+@cache_page(20, key_prefix="index_page")
 def index(request: HttpRequest) -> HttpResponse:
     """Модуль отвечающий за главную страницу."""
     posts = Post.objects.select_related('author', 'group')
@@ -22,7 +31,6 @@ def index(request: HttpRequest) -> HttpResponse:
     page_obj = paginator.get_page(page_number)
     context = {
         'title': 'Последние обновления на сайте',
-        'posts': posts,
         'page_obj': page_obj,
     }
     return render(request, 'posts/index.html', context)
@@ -73,7 +81,7 @@ def post_detail(request: HttpRequest, post_id: int) -> HttpResponse:
     """Модуль отвечающий за просмотр отдельного поста."""
     post = get_object_or_404(
         Post.objects.select_related('group', 'author'), id=post_id)
-    comments = Comment.objects.filter(post=post)
+    comments = Comment.objects.select_related("comments")
     posts_count = post.author.posts.count()
     comment_count = comments.count()
     form = CommentForm(request.POST or None)
@@ -175,10 +183,3 @@ def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
     Follow.objects.filter(user=request.user, author=author).delete()
     return redirect('posts:profile', username=username)
-
-
-def dispatch(self, request, *args, **kwargs):
-    obj = self.get_object()
-    if obj.user != self.request.user:
-        raise Http404("Вы не имеете права редактировать данный пост")
-    return super(Post, self).dispatch(request, *args, **kwargs)

@@ -54,14 +54,12 @@ class Post(CreatedModel):
         verbose_name='Группа',
         help_text='Выберите группу',
     )
-    # Поле для картинки (необязательное)
+
     image = models.ImageField(
         'Картинка',
         upload_to='posts/',
         blank=True,
     )
-    # Аргумент upload_to указывает директорию,
-    # в которую будут загружаться пользовательские файлы.
 
     class Meta:
         ordering = ('-pub_date',)
@@ -112,3 +110,6 @@ class Follow(models.Model):
         related_name='following',
         verbose_name='Автор',
     )
+
+    class Meta:
+        unique_together = ("user", "author")
