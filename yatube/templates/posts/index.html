@@ -7,22 +7,22 @@
 {% block content %} 
   <div class="container py-5"> 
     <h2>Последние обновления на сайте</h2> 
-    {% cache 20 index_page with page_obj %} 
-    <article> 
-    {% include 'includes/switcher.html' %} 
-    {% for post in page_obj %} 
-      {% include 'includes/post_template.html' %} 
-      <a href="{% url 'posts:post_detail' post.id %}"> 
-      подробная информация</a> 
+    {% cache 20 post request.path page_obj.number %}
+      <article> 
+      {% include 'includes/switcher.html' %} 
+        {% for post in page_obj %} 
+          {% include 'includes/post_template.html' %} 
+          <a href="{% url 'posts:post_detail' post.id %}"> 
+          подробная информация</a> 
       </article> 
-      {% if post.group %} 
-      <a href="{% url 'posts:group_list' post.group.slug %}"> 
-        все записи группы {{ post.group.title }}</a> 
-      {% endif %} 
-      {% if not forloop.last %}<hr>{% endif %} 
-    {% endfor %} 
-    {% include 'posts/includes/paginator.html' %} 
-    {% endcache %} 
+          {% if post.group %} 
+            <a href="{% url 'posts:group_list' post.group.slug %}"> 
+              все записи группы {{ post.group.title }}</a> 
+          {% endif %} 
+          {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %} 
+      {% include 'posts/includes/paginator.html' %} 
+    {% endcache %}
   </div> 
 {% endblock content %} 
 

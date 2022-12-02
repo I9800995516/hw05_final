@@ -1,28 +1,18 @@
 from django.conf import settings
-
 from django.contrib.auth.decorators import login_required
-
-from django.core.paginator import Paginator
-
 from django.http import HttpRequest, HttpResponse
-
 from django.shortcuts import get_object_or_404, redirect, render
 
-from django.http import HttpResponse
-
+from django.core.paginator import Paginator
 from .forms import CommentForm, PostForm
-
-from .models import Comment, Follow, Group, Post, User
-
-from django.views.decorators.cache import cache_page
-
+from .models import Follow, Group, Post, User
 from .utpag import paginator
+
 
 PER_PAGE = settings.PERPAGE
 POST_TITLE = 30
 
 
-@cache_page(20, key_prefix="index_page")
 def index(request: HttpRequest) -> HttpResponse:
     """Модуль отвечающий за главную страницу."""
     posts = Post.objects.select_related('author', 'group')
@@ -81,7 +71,7 @@ def post_detail(request: HttpRequest, post_id: int) -> HttpResponse:
     """Модуль отвечающий за просмотр отдельного поста."""
     post = get_object_or_404(
         Post.objects.select_related('group', 'author'), id=post_id)
-    comments = Comment.objects.select_related("comments")
+    comments = post.comments.all()
     posts_count = post.author.posts.count()
     comment_count = comments.count()
     form = CommentForm(request.POST or None)
